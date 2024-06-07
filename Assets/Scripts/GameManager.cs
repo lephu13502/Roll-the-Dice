@@ -130,8 +130,5 @@ public class GameManager : MonoBehaviour
         nextLevelButton.gameObject.SetActive(false);
         gameOver = false;
 
-        player1.GetComponent<PathFinding>().moveAllowed = true;
-        player2.GetComponent<PathFinding>().moveAllowed = false;
-
     }
 }
