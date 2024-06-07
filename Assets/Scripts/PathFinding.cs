@@ -5,6 +5,8 @@ using UnityEngine;
 public class PathFinding : MonoBehaviour
 {
     public Transform[] waypoints;
+    public Transform[] waypoints2;
+    public Transform[] newWaypoints;
 
     [SerializeField] private float moveSpeed = 1f;
 
@@ -14,12 +16,35 @@ public class PathFinding : MonoBehaviour
 
     private void Start()
     {
-        //add 0.5f to the y position of every waypoint to make the player move to the center of the waypoint
-        for (int i = 0; i < waypoints.Length; i++)
+        //check the current level
+        if (GameManager.currentLevel == 1)
         {
-            waypoints[i].transform.position = new Vector2(waypoints[i].transform.position.x, waypoints[i].transform.position.y + 0.3f);
+            for (int i = 0; i < waypoints.Length; i++)
+            {
+                waypoints[i].transform.position = new Vector2(waypoints[i].transform.position.x, waypoints[i].transform.position.y + 0.3f);
+            }
+            transform.position = waypoints[currentWaypointIndex].transform.position;
+
+            newWaypoints = new Transform[waypoints.Length];
+            for (int i = 0; i < waypoints.Length; i++)
+            {
+                newWaypoints[i] = waypoints[i];
+            }
         }
-        transform.position = waypoints[currentWaypointIndex].transform.position;
+        if (GameManager.currentLevel == 2)
+        {
+            for (int i = 0; i < waypoints2.Length; i++)
+            {
+                waypoints2[i].transform.position = new Vector2(waypoints2[i].transform.position.x, waypoints2[i].transform.position.y + 0.3f);
+            }
+            transform.position = waypoints2[currentWaypointIndex].transform.position;
+
+            newWaypoints = new Transform[waypoints2.Length];
+            for (int i = 0; i < waypoints2.Length; i++)
+            {
+                newWaypoints[i] = waypoints2[i];
+            }
+        }
     }
 
     private void Update()
@@ -32,14 +57,28 @@ public class PathFinding : MonoBehaviour
 
     private void Move()
     {
-        if (currentWaypointIndex <= waypoints.Length - 1)
+        if (currentWaypointIndex <= newWaypoints.Length - 1)
         {
-            transform.position = Vector2.MoveTowards(transform.position, waypoints[currentWaypointIndex].transform.position, moveSpeed * Time.deltaTime);
+            transform.position = Vector2.MoveTowards(transform.position, newWaypoints[currentWaypointIndex].transform.position, moveSpeed * Time.deltaTime);
 
-            if (transform.position == waypoints[currentWaypointIndex].transform.position)
+            if (transform.position == newWaypoints[currentWaypointIndex].transform.position)
             {
                 currentWaypointIndex += 1;
             }
         }
+    }
+    public void ResetPlayer()
+    {
+        currentWaypointIndex = 0;
+        //update the new waypoints to level 2 waypoints
+        if (GameManager.currentLevel == 2)
+        {
+            newWaypoints = new Transform[waypoints2.Length];
+            for (int i = 0; i < waypoints2.Length; i++)
+            {
+                newWaypoints[i] = waypoints2[i];
+            }
+        }
+        transform.position = newWaypoints[currentWaypointIndex].transform.position;
     }
 }
